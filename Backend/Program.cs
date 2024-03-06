@@ -1,8 +1,15 @@
+using Backend.Data;
+using Backend.Models;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddDbContext<NZWalksDBContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("WebApiPostgresDatabase")));
 
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
