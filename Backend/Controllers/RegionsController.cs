@@ -2,6 +2,7 @@
 using Backend.Models;
 using Backend.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Controllers
 {
@@ -18,10 +19,10 @@ namespace Backend.Controllers
 
         // Getting All Regions
         [HttpGet]
-        public IActionResult GetAllRegions()
+        public async Task<IActionResult> GetAllRegions()
         {
             // Get Data From DataBase - Domain models
-            var regionsDomain = _dbContext.Regions.ToList();
+            var regionsDomain = await _dbContext.Regions.ToListAsync();
 
             // Map Domain Models to DTOs
             var regionsDTO = new List<RegionDTO>();
