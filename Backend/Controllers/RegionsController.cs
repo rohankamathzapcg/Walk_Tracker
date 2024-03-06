@@ -1,4 +1,5 @@
 ﻿using Backend.Data;
+using Backend.Models;
 using Backend.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
@@ -83,6 +84,81 @@ namespace Backend.Controllers
 
             // Sending the DTO to Client
             return Ok(regionsDTO);
+        }
+
+        // To Create new Region
+        [HttpPost]
+        public IActionResult CreateNewRegion([FromBody] AddRegionRequestDTO addRegionRequestDTO)
+        {
+            // Map or Convert DTO to Domain Model
+            var regionDomainModel = new Region
+            {
+                Name = addRegionRequestDTO.Name,
+                Code = addRegionRequestDTO.Code,
+                ImageURL = addRegionRequestDTO.ImageURL
+            };
+
+            // Use Domain Model to Create Region
+            _dbContext.Regions.Add(regionDomainModel);
+            _dbContext.SaveChanges();
+
+            // Map Domain model Back to DTO
+            var regionDTO = new RegionDTO
+            {
+                Id = regionDomainModel.Id,
+                Name = regionDomainModel.Name,
+                Code = regionDomainModel.Code,
+                ImageURL = regionDomainModel.ImageURL
+            };
+
+            return CreatedAtAction(nameof(GetRegionsById), new { id = regionDTO.Id }, regionDTO);
+        }
+
+        // Update Region
+        [HttpPut]
+        [Route("{id}")]
+        public IActionResult UpdateRegion([FromRoute] int id, [FromBody] UpdateRegionRequestDTO updateRegionRequestDTO)
+        {
+            var regionDomainModel = _dbContext.Regions.FirstOrDefault(x => x.Id == id);
+            if (regionDomainModel == null)
+            {
+                return NotFound();
+            }
+
+            // Map DTO to Domain Model
+            regionDomainModel.Name = updateRegionRequestDTO.Name;
+            regionDomainModel.Code = updateRegionRequestDTO.Code;
+            regionDomainModel.ImageURL = updateRegionRequestDTO.ImageURL;
+
+            _dbContext.SaveChanges();
+
+            // Convert Domain Model to DTO
+            var regionDTO = new RegionDTO
+            {
+                Id = regionDomainModel.Id,
+                Name = regionDomainModel.Name,
+                Code = regionDomainModel.Code,
+                ImageURL = regionDomainModel.ImageURL
+            };
+
+            return Ok(regionDTO);
+        }
+
+        //Delete Region
+        [HttpDelete]
+        [Route("{id}")]
+        public IActionResult DeleteRegion([FromRoute] int id)
+        {
+            var regionDomainModel = _dbContext.Regions.FirstOrDefault(x => x.Id == id);
+            if (regionDomainModel == null)
+            {
+                return NotFound();
+            }
+            _dbContext.Regions.Remove(regionDomainModel);
+            _dbContext.SaveChanges();
+
+            return Ok();
+
         }
     }
 }
