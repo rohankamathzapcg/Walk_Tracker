@@ -1,4 +1,5 @@
-﻿using Backend.Data;
+﻿using AutoMapper;
+using Backend.Data;
 using Backend.Models;
 using Backend.Models.DTOs;
 using Backend.Repositories.RegionRepository;
@@ -12,14 +13,24 @@ namespace Backend.Controllers
     [ApiController]
     public class RegionsController : ControllerBase
     {
-        private readonly NZWalksDBContext _dbContext;
         private readonly IRegionRepository _regionRepository;
+        private readonly IMapper mapper;
 
-        public RegionsController(NZWalksDBContext dbContext, IRegionRepository regionRepository)
+        // No use as Dbcontext is defined in Reppository to maintain Abstarction
+        //private readonly NZWalksDBContext _dbContext;
+
+        //public RegionsController(NZWalksDBContext dbContext, IRegionRepository regionRepository)
+        //{
+        //    _dbContext = dbContext;
+        //    _regionRepository = regionRepository;
+        //}
+
+        public RegionsController(IRegionRepository regionRepository, IMapper mapper)
         {
-            _dbContext = dbContext;
             _regionRepository = regionRepository;
+            this.mapper = mapper;
         }
+
         /* Using DTO to Expose to the client and Models to map to the Database */
 
         // Getting All Regions
@@ -29,11 +40,11 @@ namespace Backend.Controllers
             // Get Data From DataBase - Domain models
 
             // Without using Repository Layer:- var regionsDomain = await _dbContext.Regions.ToListAsync();
-            
+
             var regionsDomain = await _regionRepository.GetAllRegions();
-            
+
             // Map Domain Models to DTOs
-            var regionsDTO = new List<RegionDTO>();
+            /* var regionsDTO = new List<RegionDTO>();
             foreach (var region in regionsDomain)
             {
                 regionsDTO.Add(new RegionDTO()
@@ -43,25 +54,10 @@ namespace Backend.Controllers
                     Code = region.Code,
                     ImageURL = region.ImageURL,
                 });
-            }
+            } */
 
-            /*var regions = new List<Region>()
-            {
-                new Region
-                {
-                    Id = 1,
-                    Name = "Auckland Region",
-                    Code="AKL",
-                    ImageURL="https://cdn.britannica.com/99/61399-050-B867F67F/skyline-Auckland-New-Zealand-Westhaven-Marina.jpg"
-                },
-                new Region
-                {
-                    Id = 2,
-                    Name="Wellington Region",
-                    Code="WLG",
-                    ImageURL="https://cdn.britannica.com/99/61399-050-B867F67F/skyline-Auckland-New-Zealand-Westhaven-Marina.jpg"
-                }
-            };*/
+            // Using Automapper :- Map Domain Models to DTOs
+            var regionsDTO = mapper.Map<List<RegionDTO>>(regionsDomain);
 
             // Sending the DTO to Client
             return Ok(regionsDTO);
@@ -76,8 +72,8 @@ namespace Backend.Controllers
 
             // var regionId = _dbContext.Regions.Find(id); only used for Id (Primary Key) 
             // Using Linq
-            
-            //Without using Repository Layer:- var regionModel = await _dbContext.Regions.FirstOrDefaultAsync(x => x.Id == id);
+
+            // Without using Repository Layer:- var regionModel = await _dbContext.Regions.FirstOrDefaultAsync(x => x.Id == id);
 
             var regionModel = await _regionRepository.GetRegionById(id);
 
@@ -87,13 +83,16 @@ namespace Backend.Controllers
             }
 
             // Map Region Model to Region DTO
-            var regionsDTO = new RegionDTO
+            /* var regionsDTO = new RegionDTO
             {
                 Id = regionModel.Id,
                 Name = regionModel.Name,
                 Code = regionModel.Code,
                 ImageURL = regionModel.ImageURL
-            };
+            }; */
+
+            // Using Automapper :- Map Domain Models to DTOs
+            var regionsDTO = mapper.Map<RegionDTO>(regionModel);
 
             // Sending the DTO to Client
             return Ok(regionsDTO);
@@ -104,24 +103,30 @@ namespace Backend.Controllers
         public async Task<IActionResult> CreateNewRegion([FromBody] AddRegionRequestDTO addRegionRequestDTO)
         {
             // Map or Convert DTO to Domain Model
-            var regionDomainModel = new Region
+            /* var regionDomainModel = new Region
             {
                 Name = addRegionRequestDTO.Name,
                 Code = addRegionRequestDTO.Code,
                 ImageURL = addRegionRequestDTO.ImageURL
-            };
+            }; */
+
+            // Using Automapper :- Map DTO to Domain Model
+            var regionDomainModel = mapper.Map<Region>(addRegionRequestDTO);
 
             // Use Domain Model to Create Region
-            regionDomainModel=await _regionRepository.CreateRegion(regionDomainModel);
+            regionDomainModel = await _regionRepository.CreateRegion(regionDomainModel);
 
             // Map Domain model Back to DTO
-            var regionDTO = new RegionDTO
+            /* var regionDTO = new RegionDTO
             {
                 Id = regionDomainModel.Id,
                 Name = regionDomainModel.Name,
                 Code = regionDomainModel.Code,
                 ImageURL = regionDomainModel.ImageURL
-            };
+            }; */
+
+            // Using Automapper :- Map Domain Model to DTO
+            var regionDTO = mapper.Map<RegionDTO>(regionDomainModel);
 
             return CreatedAtAction(nameof(GetRegionsById), new { id = regionDTO.Id }, regionDTO);
         }
@@ -132,27 +137,34 @@ namespace Backend.Controllers
         public async Task<IActionResult> UpdateRegion([FromRoute] int id, [FromBody] UpdateRegionRequestDTO updateRegionRequestDTO)
         {
             // Convert Domain Model into DTO
-            var regionDomainModel = new Region
+            /* var regionDomainModel = new Region
             {
                 Code = updateRegionRequestDTO.Code,
                 Name = updateRegionRequestDTO.Name,
                 ImageURL = updateRegionRequestDTO.ImageURL
-            };
+            }; */
+
+            // Using Automapper :- Map DTO to Domain Model
+            var regionDomainModel = mapper.Map<Region>(updateRegionRequestDTO);
+
             regionDomainModel = await _regionRepository.UpdateRegion(id, regionDomainModel);
-            
+
             if (regionDomainModel == null)
             {
                 return NotFound();
             }
 
             // Convert Domain Model to DTO
-            var regionDTO = new RegionDTO
+            /* var regionDTO = new RegionDTO
             {
                 Id = regionDomainModel.Id,
                 Name = regionDomainModel.Name,
                 Code = regionDomainModel.Code,
                 ImageURL = regionDomainModel.ImageURL
-            };
+            }; */
+
+            // Using Automapper :- Map Domain Model to DTO
+            var regionDTO = mapper.Map<RegionDTO>(regionDomainModel);
 
             return Ok(regionDTO);
         }
@@ -170,14 +182,18 @@ namespace Backend.Controllers
 
             // Return deleted Region back
             // Map Domian to DTO
-            var regionData = new RegionDTO
+            /* var regionDto = new RegionDTO
             {
                 Id = regionDomainModel.Id,
                 Name = regionDomainModel.Name,
                 Code = regionDomainModel.Code,
                 ImageURL = regionDomainModel.ImageURL
-            };
-            return Ok(regionData);
+            }; */
+
+            // Using Automapper :- Map Domain Model to DTO
+            var regionDto = mapper.Map<RegionDTO>(regionDomainModel);
+
+            return Ok(regionDto);
 
         }
     }

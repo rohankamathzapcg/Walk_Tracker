@@ -1,4 +1,5 @@
 using Backend.Data;
+using Backend.Mappings;
 using Backend.Models;
 using Backend.Repositories.RegionRepository;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,10 @@ builder.Services.AddDbContext<NZWalksDBContext>(options =>
 // Injecting Repository class with Interface
 builder.Services.AddScoped<IRegionRepository, RegionImplemetation>();
 
+// Injecting Automapper class
+builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
+
+// Injecting Controller class
 builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
