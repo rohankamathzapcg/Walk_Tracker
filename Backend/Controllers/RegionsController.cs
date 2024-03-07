@@ -1,8 +1,10 @@
 ﻿using Backend.Data;
 using Backend.Models;
 using Backend.Models.DTOs;
+using Backend.Repositories.RegionRepository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Backend.Controllers
 {
@@ -11,9 +13,12 @@ namespace Backend.Controllers
     public class RegionsController : ControllerBase
     {
         private readonly NZWalksDBContext _dbContext;
-        public RegionsController(NZWalksDBContext dbContext)
+        private readonly IRegionRepository _regionRepository;
+
+        public RegionsController(NZWalksDBContext dbContext, IRegionRepository regionRepository)
         {
             _dbContext = dbContext;
+            _regionRepository = regionRepository;
         }
         /* Using DTO to Expose to the client and Models to map to the Database */
 
@@ -22,8 +27,11 @@ namespace Backend.Controllers
         public async Task<IActionResult> GetAllRegions()
         {
             // Get Data From DataBase - Domain models
-            var regionsDomain = await _dbContext.Regions.ToListAsync();
 
+            // Without using Repository Layer:- var regionsDomain = await _dbContext.Regions.ToListAsync();
+            
+            var regionsDomain = await _regionRepository.GetAllRegions();
+            
             // Map Domain Models to DTOs
             var regionsDTO = new List<RegionDTO>();
             foreach (var region in regionsDomain)
@@ -62,13 +70,17 @@ namespace Backend.Controllers
         // Getting Single Region By ID
         [HttpGet]
         [Route("{id}")]
-        public IActionResult GetRegionsById(int id)
+        public async Task<IActionResult> GetRegionsById(int id)
         {
             // Get Single Data from Database - Domain models
 
             // var regionId = _dbContext.Regions.Find(id); only used for Id (Primary Key) 
             // Using Linq
-            var regionModel = _dbContext.Regions.FirstOrDefault(x => x.Id == id);
+            
+            //Without using Repository Layer:- var regionModel = await _dbContext.Regions.FirstOrDefaultAsync(x => x.Id == id);
+
+            var regionModel = await _regionRepository.GetRegionById(id);
+
             if (regionModel == null)
             {
                 return NotFound();
@@ -89,7 +101,7 @@ namespace Backend.Controllers
 
         // To Create new Region
         [HttpPost]
-        public IActionResult CreateNewRegion([FromBody] AddRegionRequestDTO addRegionRequestDTO)
+        public async Task<IActionResult> CreateNewRegion([FromBody] AddRegionRequestDTO addRegionRequestDTO)
         {
             // Map or Convert DTO to Domain Model
             var regionDomainModel = new Region
@@ -100,8 +112,7 @@ namespace Backend.Controllers
             };
 
             // Use Domain Model to Create Region
-            _dbContext.Regions.Add(regionDomainModel);
-            _dbContext.SaveChanges();
+            regionDomainModel=await _regionRepository.CreateRegion(regionDomainModel);
 
             // Map Domain model Back to DTO
             var regionDTO = new RegionDTO
@@ -118,20 +129,21 @@ namespace Backend.Controllers
         // Update Region
         [HttpPut]
         [Route("{id}")]
-        public IActionResult UpdateRegion([FromRoute] int id, [FromBody] UpdateRegionRequestDTO updateRegionRequestDTO)
+        public async Task<IActionResult> UpdateRegion([FromRoute] int id, [FromBody] UpdateRegionRequestDTO updateRegionRequestDTO)
         {
-            var regionDomainModel = _dbContext.Regions.FirstOrDefault(x => x.Id == id);
+            // Convert Domain Model into DTO
+            var regionDomainModel = new Region
+            {
+                Code = updateRegionRequestDTO.Code,
+                Name = updateRegionRequestDTO.Name,
+                ImageURL = updateRegionRequestDTO.ImageURL
+            };
+            regionDomainModel = await _regionRepository.UpdateRegion(id, regionDomainModel);
+            
             if (regionDomainModel == null)
             {
                 return NotFound();
             }
-
-            // Map DTO to Domain Model
-            regionDomainModel.Name = updateRegionRequestDTO.Name;
-            regionDomainModel.Code = updateRegionRequestDTO.Code;
-            regionDomainModel.ImageURL = updateRegionRequestDTO.ImageURL;
-
-            _dbContext.SaveChanges();
 
             // Convert Domain Model to DTO
             var regionDTO = new RegionDTO
@@ -148,17 +160,24 @@ namespace Backend.Controllers
         //Delete Region
         [HttpDelete]
         [Route("{id}")]
-        public IActionResult DeleteRegion([FromRoute] int id)
+        public async Task<IActionResult> DeleteRegion([FromRoute] int id)
         {
-            var regionDomainModel = _dbContext.Regions.FirstOrDefault(x => x.Id == id);
+            var regionDomainModel = await _regionRepository.DeleteRegion(id);
             if (regionDomainModel == null)
             {
                 return NotFound();
             }
-            _dbContext.Regions.Remove(regionDomainModel);
-            _dbContext.SaveChanges();
 
-            return Ok();
+            // Return deleted Region back
+            // Map Domian to DTO
+            var regionData = new RegionDTO
+            {
+                Id = regionDomainModel.Id,
+                Name = regionDomainModel.Name,
+                Code = regionDomainModel.Code,
+                ImageURL = regionDomainModel.ImageURL
+            };
+            return Ok(regionData);
 
         }
     }

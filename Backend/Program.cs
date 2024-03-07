@@ -1,5 +1,6 @@
 using Backend.Data;
 using Backend.Models;
+using Backend.Repositories.RegionRepository;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddDbContext<NZWalksDBContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("WebApiPostgresDatabase")));
+
+// Injecting Repository class with Interface
+builder.Services.AddScoped<IRegionRepository, RegionImplemetation>();
 
 builder.Services.AddControllers();
 
