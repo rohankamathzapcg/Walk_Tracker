@@ -24,7 +24,6 @@ namespace Backend.Controllers
         //    _dbContext = dbContext;
         //    _regionRepository = regionRepository;
         //}
-
         public RegionsController(IRegionRepository regionRepository, IMapper mapper)
         {
             _regionRepository = regionRepository;

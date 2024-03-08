@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Backend.Migrations
 {
-    [DbContext(typeof(NZWalksDBContext))]
+    [DbContext(typeof(DBContext))]
     partial class NZWalksDBContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
@@ -36,6 +36,23 @@ namespace Backend.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Difficulties");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Easy"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Medium"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Hard"
+                        });
                 });
 
             modelBuilder.Entity("Backend.Models.Region", b =>
@@ -60,6 +77,29 @@ namespace Backend.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Regions");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Code = "AKL",
+                            ImageURL = "123.png",
+                            Name = "Auckland Region"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Code = "KA20",
+                            ImageURL = "123.png",
+                            Name = "Udupi Region"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Code = "KA19",
+                            ImageURL = "123.png",
+                            Name = "Mangalore Region"
+                        });
                 });
 
             modelBuilder.Entity("Backend.Models.Walks", b =>

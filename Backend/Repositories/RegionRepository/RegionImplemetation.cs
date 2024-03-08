@@ -6,8 +6,8 @@ namespace Backend.Repositories.RegionRepository
 {
     public class RegionImplemetation : IRegionRepository
     {
-        private readonly NZWalksDBContext _dBContext;
-        public RegionImplemetation(NZWalksDBContext dBContext)
+        private readonly DBContext _dBContext;
+        public RegionImplemetation(DBContext dBContext)
         {
             _dBContext = dBContext;
         }
