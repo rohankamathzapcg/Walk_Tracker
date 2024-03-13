@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
-using Backend.Data;
 using Backend.Models;
 using Backend.Models.DTOs;
 using Backend.Repositories.RegionRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Reflection.Metadata.Ecma335;
 
 namespace Backend.Controllers
 {
@@ -34,6 +32,9 @@ namespace Backend.Controllers
 
         // Getting All Regions
         [HttpGet]
+
+        // Block Unauthorized users
+        [Authorize]
         public async Task<IActionResult> GetAllRegions()
         {
             // Get Data From DataBase - Domain models
@@ -101,33 +102,39 @@ namespace Backend.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateNewRegion([FromBody] AddRegionRequestDTO addRegionRequestDTO)
         {
-            // Map or Convert DTO to Domain Model
-            /* var regionDomainModel = new Region
+            if (ModelState.IsValid)
             {
-                Name = addRegionRequestDTO.Name,
-                Code = addRegionRequestDTO.Code,
-                ImageURL = addRegionRequestDTO.ImageURL
-            }; */
+                // Map or Convert DTO to Domain Model
+                /* var regionDomainModel = new Region
+                {
+                    Name = addRegionRequestDTO.Name,
+                    Code = addRegionRequestDTO.Code,
+                    ImageURL = addRegionRequestDTO.ImageURL
+                }; */
 
-            // Using Automapper :- Map DTO to Domain Model
-            var regionDomainModel = mapper.Map<Region>(addRegionRequestDTO);
+                // Using Automapper :- Map DTO to Domain Model
+                var regionDomainModel = mapper.Map<Region>(addRegionRequestDTO);
 
-            // Use Domain Model to Create Region
-            regionDomainModel = await _regionRepository.CreateRegion(regionDomainModel);
+                // Use Domain Model to Create Region
+                regionDomainModel = await _regionRepository.CreateRegion(regionDomainModel);
 
-            // Map Domain model Back to DTO
-            /* var regionDTO = new RegionDTO
+                // Map Domain model Back to DTO
+                /* var regionDTO = new RegionDTO
+                {
+                    Id = regionDomainModel.Id,
+                    Name = regionDomainModel.Name,
+                    Code = regionDomainModel.Code,
+                    ImageURL = regionDomainModel.ImageURL
+                }; */
+
+                // Using Automapper :- Map Domain Model to DTO
+                var regionDTO = mapper.Map<RegionDTO>(regionDomainModel);
+
+                return CreatedAtAction(nameof(GetRegionsById), new { id = regionDTO.Id }, regionDTO);
+            } else
             {
-                Id = regionDomainModel.Id,
-                Name = regionDomainModel.Name,
-                Code = regionDomainModel.Code,
-                ImageURL = regionDomainModel.ImageURL
-            }; */
-
-            // Using Automapper :- Map Domain Model to DTO
-            var regionDTO = mapper.Map<RegionDTO>(regionDomainModel);
-
-            return CreatedAtAction(nameof(GetRegionsById), new { id = regionDTO.Id }, regionDTO);
+                return BadRequest(ModelState);
+            }
         }
 
         // Update Region
