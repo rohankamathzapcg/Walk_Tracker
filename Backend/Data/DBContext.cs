@@ -5,7 +5,7 @@ namespace Backend.Data
 {
     public class DBContext : DbContext
     {
-        public DBContext(DbContextOptions dbContextOptions) : base(dbContextOptions)
+        public DBContext(DbContextOptions<DBContext> dbContextOptions) : base(dbContextOptions)
         {
 
         }

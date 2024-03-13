@@ -15,6 +15,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<DBContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("WebApiPostgresDatabase")));
 
+builder.Services.AddDbContext<AuthDbContext>(options=>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("WebApiPostgresDatabase")));
+
 // Injecting Automapper class
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
