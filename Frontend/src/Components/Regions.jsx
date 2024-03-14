@@ -4,6 +4,7 @@ import axios from 'axios'
 
 const Regions = () => {
   const [regions, setRegions] = useState([]);
+  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 768);
 
   useEffect(() => {
     axios.get("https://localhost:7258/api/Regions")
@@ -11,12 +12,23 @@ const Regions = () => {
         setRegions(result.data)
       })
       .catch((err) => console.log(err))
+
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth < 768);
+    }
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    }
   }, [])
 
   return (
     <>
       <div className='mt-4 mb-4 container-fluid'>
         <h2 className="text-uppercase text-center mb-5">Walking Details</h2>
+        <button className='btn btn-sm btn-lg btn-success mb-3'>Add New Region</button>
         {
           regions.length <= 0 ? <p className='text-center'>No records found</p> :
             (
@@ -37,9 +49,11 @@ const Regions = () => {
                           <th className='text-center'>{region.name}</th>
                           <td className='text-center'>{region.code}</td>
                           <td className='text-center'>{region.imageURL}</td>
-                          <td className='text-center'>
-                            <button className='btn btn-warning me-2'>Edit</button>
-                            <button className='btn btn-danger'>Delete</button>
+                          <td>
+                            <div className={`d-flex justify-content-${isSmallScreen ? 'start' : 'center'}`}>
+                              <button className="btn btn-warning me-2" style={{ width: '80px' }}>Edit</button>
+                              <button className="btn btn-danger" style={{ width: '80px' }}>Delete</button>
+                            </div>
                           </td>
                         </tr>
                       )

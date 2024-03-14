@@ -17,6 +17,7 @@ const Walk = () => {
     <>
       <div className='mt-4 mb-4 container-fluid'>
         <h2 className="text-uppercase text-center mb-5">Walking Details</h2>
+        <button className='btn btn-sm btn-lg btn-success mb-3'>Add New Walk</button>
         {
           walkDetails.length <= 0 ? <p className='text-center'>No records found</p> :
             (
@@ -55,10 +56,8 @@ const Walk = () => {
                   </tbody>
                 </table>
               </div>
-
             )
         }
-
       </div>
     </>
   )

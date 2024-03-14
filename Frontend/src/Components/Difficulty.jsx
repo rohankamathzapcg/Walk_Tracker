@@ -17,6 +17,7 @@ const Difficulty = () => {
     <>
       <div className='mt-4 mb-4 container-fluid'>
         <h2 className="text-uppercase text-center mb-5">Difficulties</h2>
+        <button className='btn btn-sm btn-lg btn-success mb-3'>Add New Difficulty</button>
         {
           difficulties.length <= 0 ? <p className='text Center'>No Records Found!</p> :
             (
@@ -48,7 +49,6 @@ const Difficulty = () => {
               </div>
             )
         }
-
       </div>
     </>
   );
