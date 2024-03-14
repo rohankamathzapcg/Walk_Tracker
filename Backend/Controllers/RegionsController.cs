@@ -34,7 +34,7 @@ namespace Backend.Controllers
         [HttpGet]
 
         // Block Unauthorized users
-        [Authorize]
+        // [Authorize]
         public async Task<IActionResult> GetAllRegions()
         {
             // Get Data From DataBase - Domain models
