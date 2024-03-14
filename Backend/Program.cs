@@ -1,5 +1,6 @@
 using Backend.Data;
 using Backend.Mappings;
+using Backend.Repositories.DifficultyRepository;
 using Backend.Repositories.RegionRepository;
 using Backend.Repositories.WalkRepository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -27,6 +28,10 @@ builder.Services.AddScoped<IRegionRepository, RegionImplemetation>();
 // Injecting Walks Repository class with Interface
 builder.Services.AddScoped<IWalkRepository, WalkImplementation>();
 
+// Injecting Difficulty Repository class with Interface
+builder.Services.AddScoped<IDifficultyRepository,DifficultyImplementation>();
+
+// Injecting JWT Token and Authorization
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => options.TokenValidationParameters = new TokenValidationParameters
 {
     ValidateIssuer = true,
@@ -47,6 +52,17 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Adding CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("corspolicy", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -59,6 +75,9 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
+
+// Using CORS Policy
+app.UseCors("corspolicy");
 
 app.UseAuthorization();
 

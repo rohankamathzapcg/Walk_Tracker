@@ -10,7 +10,7 @@ namespace Backend.Controllers
     [Route("api/[controller]")]
     [ApiController]
     // Block Unauthorized users
-    [Authorize]
+    // [Authorize]
     public class WalkController : ControllerBase
     {
         private readonly IMapper mapper;
