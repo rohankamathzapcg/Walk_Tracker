@@ -20,30 +20,32 @@ const Difficulty = () => {
         {
           difficulties.length <= 0 ? <p className='text Center'>No Records Found!</p> :
             (
-              <table className="table table-striped table-bordered">
-                <thead>
-                  <tr>
-                    <th scope="col" className='text-center'>Difficulty Id</th>
-                    <th scope="col" className='text-center'>Difficulty Level</th>
-                    <th scope="col" className='text-center'>Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="table-group-divider">
-                  {
-                    difficulties.map((difficulty, index) => {
-                      return (
-                        <tr key={index}>
-                          <th scope="row" className='text-center'>{difficulty.id}</th>
-                          <td className='text-center'>{difficulty.name}</td>
-                          <td className='text-center'>
-                            <button className='btn btn-warning'>Edit</button>
-                          </td>
-                        </tr>
-                      )
-                    })
-                  }
-                </tbody>
-              </table>
+              <div className="table-responsive">
+                <table className="table table-striped table-bordered">
+                  <thead>
+                    <tr>
+                      <th scope="col" className='text-center'>Difficulty Id</th>
+                      <th scope="col" className='text-center'>Difficulty Level</th>
+                      <th scope="col" className='text-center'>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="table-group-divider">
+                    {
+                      difficulties.map((difficulty, index) => {
+                        return (
+                          <tr key={index}>
+                            <th scope="row" className='text-center'>{difficulty.id}</th>
+                            <td className='text-center'>{difficulty.name}</td>
+                            <td className='text-center'>
+                              <button className='btn btn-warning'>Edit</button>
+                            </td>
+                          </tr>
+                        )
+                      })
+                    }
+                  </tbody>
+                </table>
+              </div>
             )
         }
 
