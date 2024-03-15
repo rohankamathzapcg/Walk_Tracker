@@ -4,6 +4,11 @@ import axios from 'axios'
 
 const Regions = () => {
   const [regions, setRegions] = useState([]);
+  const [regionsData, setRegionData] = useState({
+    name: "",
+    code: "",
+    imageURL: "",
+  })
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 768);
 
   useEffect(() => {
@@ -24,15 +29,56 @@ const Regions = () => {
     }
   }, [])
 
+  const handleSubmit = () => {
+
+    axios.post("https://localhost:7258/api/Regions", regionsData)
+      .then((result) => {
+        console.log(result)
+      })
+      .catch(err => console.log("Something went wrong!!" + err))
+  }
+
   return (
     <>
       <div className='mt-4 mb-4 container-fluid'>
         <h2 className="text-uppercase text-center mb-5">Walking Details</h2>
-        <button className='btn btn-sm btn-lg btn-success mb-3'>Add New Region</button>
+        <button type="button" className="btn btn-sm btn-lg btn-success mb-3" data-bs-toggle="modal" data-bs-target="#regionModal">
+          Add new Regions
+        </button>
+
+        {/* Modal */}
+        <div className="modal fade" id="regionModal" tabIndex={-1} aria-labelledby="regionModalLabel" aria-hidden="true">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h1 className="modal-title fs-5" id="regionModalLabel">Add New Region</h1>
+                <button type="button" className="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div className="modal-body">
+                <div className="input-group mb-3">
+                  <span className="input-group-text">Region Name</span>
+                  <input type="text" className="form-control shadow-none" aria-label="Region Name" onChange={(e) => setRegionData({ ...regionsData, name: e.target.value })} />
+                </div>
+                <div className="input-group mb-3">
+                  <span className="input-group-text">Region Code</span>
+                  <input type="text" className="form-control shadow-none" aria-label="Region Code" onChange={(e) => setRegionData({ ...regionsData, code: e.target.value })} />
+                </div>
+                {/* <div className="input-group mb-3">
+                  <input type="file" className="form-control shadow-none" aria-label="Region Image" onChange={(e) => setRegionData({ ...regionsData, imageURL: e.target.files[0].type })} />
+                </div> */}
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary shadow-none" data-bs-dismiss="modal">Close</button>
+                <button type="button" onClick={handleSubmit} className="btn btn-primary shadow-none">Add Region</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {
           regions.length <= 0 ? <p className='text-center'>No records found</p> :
             (
-              <div className="table-responsive">
+              <div className="mb-4 table-responsive">
                 <table className="table table-striped table-bordered">
                   <thead>
                     <tr>

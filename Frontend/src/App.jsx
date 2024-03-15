@@ -9,7 +9,6 @@ import HomePage from '../src/Components/HomePage';
 import Regions from '../src/Pages/Regions';
 import Difficulty from '../src/Pages/Difficulty';
 import Walk from '../src/Pages/Walk';
-import CreateRegions from '../src/Pages/CreateRegions'
 
 const App = () => {
   return (
@@ -19,11 +18,8 @@ const App = () => {
         <Routes>
 
           <Route path='/' element={<HomePage />} />
-          
-          <Route path='/regions' element={<Regions />}>
-            <Route path='/regions/add_regions' element={<CreateRegions />}/>
-          </Route>
 
+          <Route path='/regions' element={<Regions />}/>
           <Route path='/difficulty' element={<Difficulty />} />
           <Route path='/walks' element={<Walk />} />
 
