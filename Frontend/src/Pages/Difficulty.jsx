@@ -17,7 +17,32 @@ const Difficulty = () => {
     <>
       <div className='mt-4 mb-4 container-fluid'>
         <h2 className="text-uppercase text-center mb-5">Difficulties</h2>
-        <button className='btn btn-sm btn-lg btn-success mb-3'>Add New Difficulty</button>
+        <button type="button" className="btn btn-sm btn-lg btn-success mb-3" data-bs-toggle="modal" data-bs-target="#difficultyModal">
+          Add Difficulty Level
+        </button>
+
+        {/* Modal */}
+        <div className="modal fade" id="difficultyModal" tabIndex={-1} aria-labelledby="regionModalLabel" aria-hidden="true">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h1 className="modal-title fs-5" id="regionModalLabel">Add Difficulty Level</h1>
+                <button type="button" className="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div className="modal-body">
+                <div className="input-group mb-3">
+                  <span className="input-group-text">Difficulty Level</span>
+                  <input type="text" className="form-control shadow-none" aria-label="Difficulty Level" />
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary shadow-none" data-bs-dismiss="modal">Close</button>
+                <button type="button" className="btn btn-primary shadow-none">Add Difficulty</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {
           difficulties.length <= 0 ? <p className='text Center'>No Records Found!</p> :
             (

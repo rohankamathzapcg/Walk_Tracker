@@ -12,6 +12,13 @@ namespace Backend.Repositories.DifficultyRepository
             this.dBContext = dBContext;
         }
 
+        public async Task<Difficulty> CreateDifficulty(Difficulty difficulty)
+        {
+            await dBContext.Difficulties.AddAsync(difficulty);
+            await dBContext.SaveChangesAsync();
+            return difficulty;
+        }
+
         public async Task<List<Difficulty>> GetAllDifficulies()
         {
             return await dBContext.Difficulties.ToListAsync();
