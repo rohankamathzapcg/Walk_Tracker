@@ -10,6 +10,12 @@ const Regions = () => {
     code: "",
     imageURL: "",
   })
+  const [selectedId, setSelectedId] = useState(null)
+  const [updateRegionsData, setUpdateRegionData] = useState({
+    name: "",
+    code: "",
+    imageURL: "",
+  })
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 768);
   const closeRef = useRef(null);
 
@@ -35,6 +41,23 @@ const Regions = () => {
     if (closeRef.current) {
       closeRef.current.click();
     }
+  }
+
+  const handleEdit = (id) => {
+    setSelectedId(id)
+    for (let i = 0; i < regions.length; i++) {
+      if (regions[i].id === id) {
+        setUpdateRegionData({
+          name: regions[i].name,
+          code: regions[i].code,
+          imageURL: regions[i].imageURL
+        })
+      }
+    }
+  }
+
+  const handleDelete = (id) => {
+    setSelectedId(id)
   }
 
   const handleSubmit = () => {
@@ -69,6 +92,54 @@ const Regions = () => {
       }))
   }
 
+  const handleUpdate = () => {
+    axios.put(`https://localhost:7258/api/Regions/${selectedId}`, updateRegionsData)
+      .then((result) => {
+
+        if (result.status === 200) {
+          toast.success("Region updated Successfully", {
+            theme: "dark",
+            autoClose: 1000,
+          });
+          handleCloseBtn();
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+          console.log(regions)
+        } else {
+          toast.error("Invalid Data", {
+            theme: "dark",
+            autoClose: 1000,
+          });
+        }
+      })
+      .catch(err => console.log(err))
+  }
+
+  const handleRemove = () => {
+    axios.delete(`https://localhost:7258/api/Regions/${selectedId}`)
+      .then((result) => {
+        if (result.status === 200) {
+          toast.success("Region deleted Successfully", {
+            theme: "dark",
+            autoClose: 1000,
+          });
+          handleCloseBtn();
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+          console.log(regions)
+        } else {
+          toast.error("Something went wrong!!", {
+            theme: "dark",
+            autoClose: 1000,
+          });
+        }
+      })
+      .catch(err => console.log(err))
+  }
+
+
   return (
     <>
       <ToastContainer />
@@ -78,7 +149,7 @@ const Regions = () => {
           Add new Regions
         </button>
 
-        {/* Modal */}
+        {/* Create Modal */}
         <div className="modal fade" id="regionModal" tabIndex={-1} aria-labelledby="regionModalLabel" aria-hidden="true">
           <div className="modal-dialog">
             <div className="modal-content">
@@ -107,6 +178,54 @@ const Regions = () => {
           </div>
         </div>
 
+        {/* Edit Modal */}
+        <div className="modal fade" id="editRegionModal" tabIndex={-1} aria-labelledby="editRegionModalLabel" aria-hidden="true">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h1 className="modal-title fs-5" id="editRegionModalLabel">Edit Region</h1>
+                <button type="button" ref={closeRef} className="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div className="modal-body">
+                <div className="input-group mb-3">
+                  <span className="input-group-text">Region Name</span>
+                  <input type="text" className="form-control shadow-none" value={updateRegionsData.name} aria-label="Region Name" onChange={(e) => setUpdateRegionData({ ...updateRegionsData, name: e.target.value })} />
+                </div>
+                <div className="input-group mb-3">
+                  <span className="input-group-text">Region Code</span>
+                  <input type="text" className="form-control shadow-none" value={updateRegionsData.code} aria-label="Region Code" onChange={(e) => setUpdateRegionData({ ...updateRegionsData, code: e.target.value })} />
+                </div>
+                <div className="input-group mb-3">
+                  <input type="file" className="form-control shadow-none" aria-label="Region Image" onChange={(e) => setUpdateRegionData({ ...updateRegionsData, imageURL: e.target.files[0].name })} />
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary shadow-none" data-bs-dismiss="modal">Close</button>
+                <button type="button" onClick={handleUpdate} className="btn btn-primary shadow-none">Update Region</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Delete Modal */}
+        <div className="modal fade" id="deleteRegionModal" tabIndex={-1} aria-labelledby="deleteRegionModalLabel" aria-hidden="true">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h1 className="modal-title fs-5" id="deleteRegionModalLabel">Delete Region</h1>
+                <button type="button" ref={closeRef} className="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div className="modal-body">
+                <p>Do you want to delete this specific Region ?</p>
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-secondary shadow-none" data-bs-dismiss="modal">Close</button>
+                  <button type="button" onClick={handleRemove} className="btn btn-danger shadow-none">Delete Region</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {
           regions.length <= 0 ? <p className='text-center'>No records found</p> :
             (
@@ -129,8 +248,10 @@ const Regions = () => {
                           <td className='text-center'>{region.imageURL}</td>
                           <td>
                             <div className={`d-flex justify-content-${isSmallScreen ? 'start' : 'center'}`}>
-                              <button className="btn btn-warning me-2" style={{ width: '80px' }}>Edit</button>
-                              <button className="btn btn-danger" style={{ width: '80px' }}>Delete</button>
+                              <button type="button" className="btn btn-warning me-2" style={{ width: '80px' }} data-bs-toggle="modal" data-bs-target="#editRegionModal" onClick={() => handleEdit(region.id)}>
+                                Edit
+                              </button>
+                              <button className="btn btn-danger" style={{ width: '80px' }} data-bs-toggle="modal" data-bs-target="#deleteRegionModal" onClick={() => handleDelete(region.id)}>Delete</button>
                             </div>
                           </td>
                         </tr>
