@@ -28,11 +28,11 @@ namespace Backend.Controllers
             return Ok(difficultyDTO);
         }
         [HttpPost]
-        public async Task<IActionResult> CreateDifficulty([FromBody] DifficultyDTO difficultyDTO)
+        public async Task<IActionResult> CreateDifficulty([FromBody] AddDifficultyRequestDTO addDifficultyRequestDTO)
         {
             if (ModelState.IsValid)
             {
-                var difficultyDomain = mapper.Map<Difficulty>(difficultyDTO);
+                var difficultyDomain = mapper.Map<Difficulty>(addDifficultyRequestDTO);
                 difficultyDomain = await difficultyRepository.CreateDifficulty(difficultyDomain);
                 var difficultyDTO = mapper.Map<DifficultyDTO>(difficultyDomain);
                 return Ok(difficultyDTO);

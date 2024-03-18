@@ -16,7 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<DBContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("WebApiPostgresDatabase")));
 
-builder.Services.AddDbContext<AuthDbContext>(options=>
+builder.Services.AddDbContext<AuthDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("WebApiPostgresDatabase")));
 
 // Injecting Automapper class
@@ -29,7 +29,7 @@ builder.Services.AddScoped<IRegionRepository, RegionImplemetation>();
 builder.Services.AddScoped<IWalkRepository, WalkImplementation>();
 
 // Injecting Difficulty Repository class with Interface
-builder.Services.AddScoped<IDifficultyRepository,DifficultyImplementation>();
+builder.Services.AddScoped<IDifficultyRepository, DifficultyImplementation>();
 
 // Injecting JWT Token and Authorization
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => options.TokenValidationParameters = new TokenValidationParameters

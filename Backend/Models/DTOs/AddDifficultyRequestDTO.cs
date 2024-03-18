@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Backend.Models
+namespace Backend.Models.DTOs
 {
-    public class Difficulty
+    public class AddDifficultyRequestDTO
     {
-        public int Id { get; set; }
+        [Required]
         public string Name { get; set; }
     }
 }

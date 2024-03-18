@@ -2,7 +2,6 @@
 using Backend.Models;
 using Backend.Models.DTOs;
 using Backend.Repositories.RegionRepository;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers
@@ -131,7 +130,8 @@ namespace Backend.Controllers
                 var regionDTO = mapper.Map<RegionDTO>(regionDomainModel);
 
                 return CreatedAtAction(nameof(GetRegionsById), new { id = regionDTO.Id }, regionDTO);
-            } else
+            }
+            else
             {
                 return BadRequest(ModelState);
             }
