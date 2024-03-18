@@ -38,7 +38,7 @@ const HomePage = () => {
                                                     <th className='text-center'>{walk.name}</th>
                                                     <td className='text-center'>{walk.description}</td>
                                                     <td className='text-center'>{walk.distance}</td>
-                                                    <td className='text-center'>{walk.imageURL == "" ? walk.imageURL : "No Image"}</td>
+                                                    <td className='text-center'>{walk.imageURL === "" ? "No Image" : walk.imageURL}</td>
                                                     <td className='text-center'>{walk.region.code}</td>
                                                     <td className='text-center'>{walk.region.name}</td>
                                                     <td className='text-center'>{walk.difficulty.name}</td>

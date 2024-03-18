@@ -146,7 +146,7 @@ const Regions = () => {
       <div className='mt-4 mb-4 container-fluid'>
         <h2 className="text-uppercase text-center mb-5">Walking Details</h2>
         <button type="button" className="btn btn-sm btn-lg btn-success mb-3" data-bs-toggle="modal" data-bs-target="#regionModal">
-          Add new Regions
+          Add New Regions
         </button>
 
         {/* Create Modal */}
