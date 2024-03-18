@@ -21,6 +21,7 @@ namespace Backend.Mappings
             // For Dificulty
             CreateMap<Difficulty, DifficultyDTO>().ReverseMap();
             CreateMap<AddDifficultyRequestDTO, Difficulty>().ReverseMap();
+            CreateMap<UpdateDifficultyRequestDTO,Difficulty>().ReverseMap();
         }
     }
 }

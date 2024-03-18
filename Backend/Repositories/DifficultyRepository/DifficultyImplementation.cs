@@ -23,5 +23,17 @@ namespace Backend.Repositories.DifficultyRepository
         {
             return await dBContext.Difficulties.ToListAsync();
         }
+
+        public async Task<Difficulty> UpdateDifficulty(int id, Difficulty difficulty)
+        {
+            var existingDifficulty = await dBContext.Difficulties.FirstOrDefaultAsync(x => x.Id == id);
+            if (existingDifficulty == null)
+            {
+                return null;
+            }
+            existingDifficulty.Name = difficulty.Name;
+            await dBContext.SaveChangesAsync();
+            return existingDifficulty;
+        }
     }
 }

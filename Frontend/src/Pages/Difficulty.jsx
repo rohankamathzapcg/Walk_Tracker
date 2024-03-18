@@ -9,6 +9,10 @@ const Difficulty = () => {
   const [difficultyDetails, setDifficultyDetails] = useState({
     name: "",
   })
+  const [editDifficulty, setEditDifficulty] = useState({
+    name: ""
+  })
+  const [selectedId, setSelectedId] = useState(null)
   const closeRef = useRef(null)
 
   useEffect(() => {
@@ -45,6 +49,39 @@ const Difficulty = () => {
       .catch(err => console.log(err))
   }
 
+  const handleEdit = (id) => {
+    setSelectedId(id);
+    for (let i = 0; i < difficulties.length; i++) {
+      if (difficulties[i].id === id) {
+        setEditDifficulty({
+          name: difficulties[i].name
+        })
+      }
+    }
+  }
+
+  const handleUpdate = () => {
+    axios.put(`https://localhost:7258/api/Difficulty/${selectedId}`, editDifficulty)
+      .then((result) => {
+        if (result.status === 200) {
+          toast.success("Difficulty updated Successfully", {
+            theme: "dark",
+            autoClose: 1000,
+          });
+          handleCloseBtn();
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+        } else {
+          toast.error("Something went wrong!!", {
+            theme: "dark",
+            autoClose: 1000,
+          });
+        }
+      })
+      .catch(err => console.log(err))
+  }
+
   return (
     <>
       <ToastContainer />
@@ -54,12 +91,12 @@ const Difficulty = () => {
           Add Difficulty Level
         </button>
 
-        {/* Modal */}
-        <div className="modal fade" id="difficultyModal" tabIndex={-1} aria-labelledby="regionModalLabel" aria-hidden="true">
+        {/* Add Modal */}
+        <div className="modal fade" id="difficultyModal" tabIndex={-1} aria-labelledby="difficultyModalLabel" aria-hidden="true">
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
-                <h1 className="modal-title fs-5" id="regionModalLabel">Add Difficulty Level</h1>
+                <h1 className="modal-title fs-5" id="difficultyModalLabel">Add Difficulty Level</h1>
                 <button type="button" ref={closeRef} className="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div className="modal-body">
@@ -71,6 +108,28 @@ const Difficulty = () => {
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary shadow-none" data-bs-dismiss="modal">Close</button>
                 <button type="button" className="btn btn-primary shadow-none" onClick={handleSubmit}>Add Difficulty</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Edit Modal */}
+        <div className="modal fade" id="editDifficultyModal" tabIndex={-1} aria-labelledby="editDifficultyModalLabel" aria-hidden="true">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h1 className="modal-title fs-5" id="editDifficultyModalLabel">Edit Difficulty Level</h1>
+                <button type="button" ref={closeRef} className="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div className="modal-body">
+                <div className="input-group mb-3">
+                  <span className="input-group-text">Difficulty Level</span>
+                  <input type="text" value={editDifficulty.name} onChange={(e) => setEditDifficulty({ ...editDifficulty, name: e.target.value })} className="form-control shadow-none" aria-label="Difficulty Level" />
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary shadow-none" data-bs-dismiss="modal">Close</button>
+                <button type="button" className="btn btn-primary shadow-none" onClick={handleUpdate}>Update Difficulty Level</button>
               </div>
             </div>
           </div>
@@ -96,7 +155,9 @@ const Difficulty = () => {
                             <th scope="row" className='text-center'>{difficulty.id}</th>
                             <td className='text-center'>{difficulty.name}</td>
                             <td className='text-center'>
-                              <button className='btn btn-warning'>Edit</button>
+                              <button type="button" className="btn btn-warning" style={{ width: '80px' }} data-bs-toggle="modal" data-bs-target="#editDifficultyModal" onClick={() => handleEdit(difficulty.id)}>
+                                Edit
+                              </button>
                             </td>
                           </tr>
                         )

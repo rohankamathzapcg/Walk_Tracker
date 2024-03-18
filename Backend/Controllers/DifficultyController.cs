@@ -34,6 +34,7 @@ namespace Backend.Controllers
             {
                 var difficultyDomain = mapper.Map<Difficulty>(addDifficultyRequestDTO);
                 difficultyDomain = await difficultyRepository.CreateDifficulty(difficultyDomain);
+
                 var difficultyDTO = mapper.Map<DifficultyDTO>(difficultyDomain);
                 return Ok(difficultyDTO);
 
@@ -42,7 +43,20 @@ namespace Backend.Controllers
             {
                 return BadRequest(ModelState);
             }
+        }
+        [HttpPut]
+        [Route("{id}")]
+        public async Task<IActionResult> UpdateDifficulty([FromRoute] int id, [FromBody] UpdateDifficultyRequestDTO updateDifficultyRequestDTO)
+        {
+            var difficultyDomain=mapper.Map<Difficulty>(updateDifficultyRequestDTO);
+            difficultyDomain=await difficultyRepository.UpdateDifficulty(id,difficultyDomain);
+            if(difficultyDomain == null)
+            {
+                return NotFound();
+            }
 
+            var difficultyDTO=mapper.Map<DifficultyDTO>(difficultyDomain);
+            return Ok(difficultyDTO);
         }
     }
 }
